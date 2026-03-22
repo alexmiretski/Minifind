@@ -7,9 +7,10 @@ import { MinifigDetail } from './components/MinifigDetail';
 import { Sidebar } from './components/Sidebar';
 import { MinifigureHead } from './components/Logo';
 import { searchMinifigures } from './services/geminiService';
+import { minifigCatalog } from './data/minifigCatalog';
 
 export default function App() {
-  const [minifigures, setMinifigures] = useState<Minifigure[]>([]);
+  const [minifigures, setMinifigures] = useState<Minifigure[]>(() => minifigCatalog);
   const [ownedIds, setOwnedIds] = useState<Set<string>>(() => {
     const saved = localStorage.getItem('minifind_owned');
     return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -34,19 +35,11 @@ export default function App() {
   });
 
   const [sortOrder, setSortOrder] = useState<'name' | 'price-asc' | 'price-desc' | 'year'>('name');
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>('my-collection');
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [selectedMinifig, setSelectedMinifig] = useState<Minifigure | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-
-  // Initial Load Simulation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Dynamic Search Handler with Debounce
   useEffect(() => {
